@@ -1,0 +1,36 @@
+6.1:介绍spring IOC 容器和 beans
+	这个章节讲解了spring框架控制反转的原理的实现。控制反转也叫作依赖注入，
+	
+这是一个对象定义他们的依赖的过程，这个对象需要通过他的依赖才能运作，这些依赖
+
+仅仅通过构造器参数，工厂方法的参数，或者是被设置在构造好了的以及从工厂方法里
+
+返回的实例对象的属性。之后在创建bean的时候IOC容器将这些依赖注入到对象中，
+
+这个过程是完全相反的，所以叫做控制反转（inversion of control）。bean直接通过
+
+类操作控制依赖的实例化和位置，或者一种类似于服务定位模式的机制。
+
+    org.springframework.beans包和org.springframework.context包是spring框架IOC
+	
+容器的基础，BeanFactory接口通过一种高级的配置机制来管理各种类型的对象，
+
+ApplicationContext是BeanFactory的一个子接口，它添加了更加简单的springAOP的一
+
+些特性，有消息资源的处理（国际化中使用到），事件发布；在web应用中使用的应用层
+
+定制的上下文例如webapplicationcontext。
+
+	简而言之，BeanFactory提供了配置框架和基础功能，ApplicationContext添加了一
+	
+些企业级定制的功。ApplicationContext是BeanFactory的一个完整的超集，并且在本章中
+
+广泛使用来描述spring IOC容器，想要指到更多关于BeanFatory替代ApplicationContext的
+
+内容，可以去看6.16节。
+
+	spring中，那些在应用主体中的以及被IOC容器管理的对象称作beans，一个bean就是
+	
+一个实例化了的，经过组装了的并且被容器管理的对象，另外，bean仅仅是应用中众多对象中
+
+的一个，beans和dependencies也包含在其中，通过容器他们反应在配置文件中
