@@ -1,0 +1,67 @@
+一：简介
+    org.springframework.context.ApplicationContext接口代表了SpringIOC容器，并且能够
+
+实例化，配置，装配6.1节提到的beans。容器通过读取配置元数据来决定实例化，配置，装配哪些
+
+beans。配置元数据可以表现为xml，java注解 ，或者java代码。他能让你表示出构成你的应用的
+
+是哪些对象，并且这些对象之间之间丰富的依赖关系。
+
+    spring还提供了ApplicationContext接口的一些实现。在独立的应用程序中经常会创建一些
+
+ClassPathXMLApplicationContext 或者 FileSystemXMLApplicationContext的对象，尽管xml
+
+是定义元数据的传统的一种形式，你也可以通过java注解或者java代码这些其他的方式搭配少量的
+
+xml来构建容器。
+
+    在大多数的应用场景中，在Spring IOC容器中现实的使用代码来实例化对象是没有必要的，例如，
+
+在web应用程序中，在web.xml中8行左右的xml样板描述就已经够用了，如果你使用eclipse中的spring
+
+tool suite环境通过点击和敲键救就能很容易创建配置的样板。
+
+    下面这张图从打的方面来看Spring是如何工作的。在ApplicationContext创建并且实例化了了
+
+之后，你自己的类就能和配置元数据绑定了，你就有了一个配置好的，可运行的系统或者应用。可以见
+
+图（1）。
+
+二：配置元数据
+    正如上图所示，这是一种Spring IOC容器使用配置元数据的一种形式，开发者能通过这份配置
+
+元数据告诉容器如何实例化，配置，装配应用所需的对象。
+
+    你也可以用其他配置元数据的形式。比如java注解，或者java代码。
+
+    spring的配置由至少一个或者多个容器管理的对象的定义组成，基于xml的配置元数据展示了这
+
+些beans是通过顶级的<beans>元素内置<bean>元素来配置而成的。基于java的配置使用在@Configuration
+
+类中包含@Bean注解的方法。这些beans的定义适合构成应用的实际的对象相对应的。你可能会定义服务层
+
+对象，dao层对象，比如structs Action对象的表现层对象，比如Hibernate SessionFactories,
+
+JMS Queues这些底层对象。但是有一点，你不能通过这些来配置容器中的细粒度的域对象，因为
+
+dao层和业务逻辑经常想创建和加载域对象，但是你可以使用AspectJ来配置容器无法控制的对象，下面
+
+是一个基于xml的配置元数据。
+
+            <?xml version="1.0" encoding="UTF-8"?>
+            <beans xmlns="http://www.springframework.org/schema/beans"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+            <bean id="..." class="...">
+            <!-- collaborators and configuration for this bean go here -->
+            </bean>
+            <bean id="..." class="...">
+            <!-- collaborators and configuration for this bean go here -->
+            </bean>
+            <!-- more bean definitions go here -->
+            </beans>
+
+id属性用来区分bean，class属性定义了bean的类，并且它是使用全限定名的。id的值对应着一个对象，
+
+本例中没有展示出这个对象。
