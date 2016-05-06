@@ -27,7 +27,8 @@ tool suite环境通过点击和敲键救就能很容易创建配置的样板。
 
 图（1）。
 
-二：配置元数据
+-----------------------------配置元数据---------------------------
+
     正如上图所示，这是一种Spring IOC容器使用配置元数据的一种形式，开发者能通过这份配置
 
 元数据告诉容器如何实例化，配置，装配应用所需的对象。
@@ -65,3 +66,93 @@ dao层和业务逻辑经常想创建和加载域对象，但是你可以使用As
 id属性用来区分bean，class属性定义了bean的类，并且它是使用全限定名的。id的值对应着一个对象，
 
 本例中没有展示出这个对象。
+
+------------------------------实例化容器--------------------------------：
+
+	实例化一个spring ioc容器是十分直白的，提供给ApplicationContext构造器的本地的一个或者多
+	
+个路径也就是资源的字符串，允许容器从很多外部资源中加载配置元数据，这些外部资源包括比如本地
+
+文件路径，java Classpath等等。
+
+	ApplicationContext context = new ClassPathXmlApplicationContext(new String[] 
+	{"services.xml", "daos.xml"});
+	
+下面的这个例子是service层对象的配置文件：
+
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+		<!-- services -->
+		<bean id="petStore" class="org.springframework.samples.jpetstore.services.PetStoreServiceImpl">
+		<property name="accountDao" ref="accountDao"/>
+		<property name="itemDao" ref="itemDao"/>
+		<!-- additional collaborators and configuration for this bean go here -->
+		</bean>
+		<!-- more bean definitions for services go here -->
+		</beans>
+		
+下面这个例子是dao层对象的配置文件
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+		<bean id="accountDao"
+		class="org.springframework.samples.jpetstore.dao.jpa.JpaAccountDao">
+		<!-- additional collaborators and configuration for this bean go here -->
+		</bean>
+		<bean id="itemDao" class="org.springframework.samples.jpetstore.dao.jpa.JpaItemDao">
+		<!-- additional collaborators and configuration for this bean go here -->
+		</bean>
+		<!-- more bean definitions for data access objects go here -->
+		</beans>
+		
+在以上的例子中，service层包含了类PetStoreServiceImpl，并且两个dao对象JpaAccountDao类和JpaItemDao类
+
+属性的名称对应的是javabean的属性，ref对应的是另外的bean的名字，id和ref之间的绑定告诉了我们协作对象
+
+之间的依赖关系，想要知道更多的配置的细节，请看6.4 Dependencies。
+
+----------------------------------构建基于xml的配置元数据------------------------------：
+
+	在多个xml文件中定义bean是非常有用的，正常来说每个xml配置文件代表你的体系中的一个逻辑层次或者模块
+例如：	
+		<beans>
+		<import resource="services.xml"/>
+		<import resource="resources/messageSource.xml"/>
+		<import resource="/resources/themeSource.xml"/>
+		<bean id="bean1" class="..."/>
+		<bean id="bean2" class="..."/>
+		</beans>
+在上述的一个例子中，外部的bean定义从service.xml,messageSource.xml,themeSource.xml中加载，所有的本地路径
+
+所关联的定义文件都被导入了，所以service.xml和当前的xml文件要在同一个文件下，这里并没有在最前面写一个/,
+
+但是这些路径都是有关联的，更好的格式是都不在最前面使用/,这些文件中的内容都被导入了，包括顶级元素<beans>,
+
+这里必须是用spring的schema来保证xml文件的额有效性。
+
+-------------------------------------使用容器----------------------------------------：
+	ApplicationContext接口是一个能够维护不同的beans和她们之间的依赖的注册表的高级工厂，使用getbean（）方法
+	
+你能够取出你想要的beans
+
+ApplicationContext能够让你读取bean定义兵器得到她们，如下所示：
+
+		ApplicationContext context =
+		new ClassPathXmlApplicationContext(new String[] {"services.xml", "daos.xml"});
+		// retrieve configured instance
+		PetStoreService service = context.getBean("petStore", PetStoreService.class);
+		// use configured instance
+		List<String> userList = service.getUsernameList();
+
+你使用getbean（）方法得到beans的实例，ApplicationContext还有一些其他的方法能达到这个效果，但是不建议你使用。
+
+事实上，你的应用代码是没有必要使用getbean（）这个方法的，所以没有spring API没有依赖，例如，在spring整合web
+
+框架的时候，会实现依赖注入。
+
+
