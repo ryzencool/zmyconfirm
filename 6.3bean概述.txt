@@ -1,0 +1,97 @@
+Bean概述：
+
+	一个spring IOC容器管理着一个或者多个beans，这些bean通过配置元数据创建
+
+来提供给容器使用，例如，xml形式的bean定义。
+
+	对容器本身来说，这些bean定义都表示的都是BeanDefinition对象，这些对象包
+	
+含着一下的元数据：
+	
+	1，一个包级全限定类名：就是bean定义的实际的实现类
+	
+	2，bean行为配置元素，就是bean在container中该如何去运行（scope，lifestyle
+	，callbacks等等）
+	
+	3，一个bean想要完成它的任务对于其他beans的引用，这些引用也叫依赖或者合作者。
+	
+	4，对于新创建的对象所需的其他的配置信息，例如，bean管理的连接池的连接的条数，
+	或者是连接池的容量限制。
+	
+	这些元数据准华为一系列的属性来组成bean定义。
+	
+	这些属性有：class,name,scope,constructor arguments,properties,autowiring mode,
+
+lazy-initalization mode,initialization method, destruction method.
+
+除了包含了一些如何创建一个特定的bean的信息的bean，ApplicationContext的实现也允许
+
+开发者注册那些创建在容器外的已经存在的对象，着通过application的BeanFactory的方法
+
+getBeanFactory（） 来返回BeanFactory的实现类defaultListableBeanFactory。
+
+defaultListableBeanFactory 通过registerSingleton（）和registerBeanDefinition()来
+
+支持这些外部对象的注册。 但是一般的应用都是通过元数据bean定义来运作的。
+
+----------------------------beans的命名--------------------------
+
+每个bean都有一个或者多个标记，这些标记必须在容器中是是独一无二的，一个bean往往只有
+
+一个标记，但是他需要不止一个，其他的用作别名。
+
+在基于xml的配置元数据中，你使用id或者name属性去指定bean的标记，id属性让你正确的指定
+
+一个id，按照惯例，这些都是由字母组成的，但是也有特例，如果你想介绍其他的别名给bean，你可以
+
+通过name属性来指定他们，通过（，）（；）或者空格来分隔他们。
+	
+	有时候你并不需要给这些bean命名，如果没有id或者name提供，容器会生成一个独一无二的名字给
+	
+这个bean，但是，如果你通过name来使用他，通过ref元素，你需要一个name。autowiring中和内置bean
+	
+也是不需要name的。命名的时候使用驼峰命名法则。
+	
+	---------------------------在bean定义之外给bean取别名--------------
+	
+		在一个bean定义本身中，你能够提供很多name给这个bena，通过结合使用id和name。这些name关联的
+		
+是同一个bean，在某些场合是十分有用的，例如，能够让应用里的每个组件通过name来指向他们的依赖
+		
+使得组件很明了。
+			
+	为每个bean取别名是没有必要的，但是有时候我们希望为别处定义的bean定义一个别名。这在一个
+		
+系统中常见的，这些系统中的配置都是分隔在一些子系统中，每个子系统有自己的对象定义集合。在xml定义
+
+的配置元数据中，你能有使用<alias>元素去完成这些。
+
+	<alias name="forname" alias="toName"/>
+	
+在这种情况中，同一个容器中的bean被命名为fromname，并且通过使用别名定义，toname也指向这个对象。
+
+	举个例子，子系统A中的配置元数据和名称为subSystemA-datasource的DataSource相关联。子系统B中的
+	
+名为subSystemB-dataSource和Datasource相连，当主应用中都要使用这些子系统，并且myApp-dataSource和
+
+Datasource相连，当主应用中都要使用这些子系统，并且myApp-d相连。为了这三个名称都和相同的对象关联，
+
+你需要像下面这样：
+	
+	<alias name="subSystemA-dataSource" alias="subSystemB-dataSource"/>
+	<alias name="subSystemA-dataSource" alias="myApp-dataSource"/>
+	
+现在每个模块和主应用都通过名字和同一个datasource相关联了。
+
+------------------------实例化beans------------------------
+
+	一份bean的定义本质上创建多个对象的单子。容器通过这张单子来询问，使用元数据去创建实际的对象。如果你使用
+
+基于xml的配置元数据，你通过clas属性指定了一个对象类型来创建对象。
+
+
+	
+		
+		
+	
+	
